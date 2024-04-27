@@ -14,20 +14,36 @@ provider "google" {
   # Configuration options
 }
 
-resource "google_storage_bucket" "bunda-001" {
+resource "google_storage_bucket" "bunda-bucket-001" {
   name          = "bundlesofboricuabunda"
   location      = "US-west2"
   force_destroy = true
 
-  uniform_bucket_level_access = true
-
-  website {
-    main_page_suffix = "index.html"
-    not_found_page   = "404.html"
-  }
-  cors {
-    method          = ["GET", "HEAD", "PUT", "POST", "DELETE"]
-    response_header = ["*"]
-    max_age_seconds = 3600
-  }
 }
+
+
+resource "google_compute_network" "bunda-vpc-001" {
+  name = "bunda-vpc-001"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "bunda-sg-public" {
+  name ="bunda-sg"
+  network = google_compute_network.bunda-vpc-001.id
+  ip_cidr_range = "10.118.1.0/24"
+  region = "us-west2"
+}
+
+
+#resource "google_compute_network" "custom-vpc-tf" {
+  #name = "custom-vpc-tf"
+ #auto_create_subnetworks = false
+#}
+
+output "auto" {
+  value = google_compute_network.bunda-vpc-001.id
+}
+
+#output "custom" {
+#  value = google_compute_network.custom-vpc-tf.id
+#}
